@@ -7,7 +7,7 @@ export default function Home() {
 
     const logIn = () => { 
         console.log("User pressed logged in."); 
-        navigate("/login");
+        navigate("/spotify-login");
     }
     return(
         <div>
