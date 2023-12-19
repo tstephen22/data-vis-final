@@ -27,7 +27,7 @@ export default function SpotifyLogin () {
         const codeChallenge = base64encode(hashed);
         const CLIENT = process.env.REACT_APP_CLIENT
         const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI
-        const appScope = 'user-read-private user-read-email user-top-read'; //The scope used by the project 
+        const appScope = 'user-read-private user-read-email user-top-read user-library-read'; //The scope used by the project 
     
         console.log("User pressed logged in."); 
         const spotifyLink = new URL("https://accounts.spotify.com/authorize");
