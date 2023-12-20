@@ -114,64 +114,66 @@ export default function ProfilePage()  {
 
     return (
         <div className="radarComponent">
-          <div className="radarTitle">
-            Your liked songs<i style={{marginLeft: 10}}> -  {overallMeans.trackCount} tracks</i>
-          </div>
           {
-            means && metrics ? 
-            <div className="radarWrapper">
-              <div className="radar">
-                <ResponsiveContainer width="100%" height="100%"  minHeight={500} minWidth={800}> 
-                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={tableise(metrics)}>
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="metric" /> 
-                    <PolarRadiusAxis angle={45} domain={[0,1]}/>
-                    <Tooltip contentStyle={{fontSize: 14}}/>
-                    <Radar name="Month" dataKey="value" stroke={colorise(metrics.valence)} fill={colorise(metrics.valence)} fillOpacity={0.6} />
-                    {showOverall && <Radar name="Overall" dataKey="overall" stroke="#5F8575" fill="#5F8575" fillOpacity={0.4} />}
-                  </RadarChart>
-                </ResponsiveContainer>
+            means && metrics ?
+            <>
+            <div className="radarTitle">
+              Your liked songs<i style={{marginLeft: 10}}> -  {overallMeans.trackCount} tracks</i>
+            </div>
+              <div className="radarWrapper">
+                <div className="radar">
+                  <ResponsiveContainer width="100%" height="100%"  minHeight={500} minWidth={800}> 
+                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={tableise(metrics)}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="metric" /> 
+                      <PolarRadiusAxis angle={45} domain={[0,1]}/>
+                      <Tooltip contentStyle={{fontSize: 14}}/>
+                      <Radar name="Month" dataKey="value" stroke={colorise(metrics.valence)} fill={colorise(metrics.valence)} fillOpacity={0.6} />
+                      {showOverall && <Radar name="Overall" dataKey="overall" stroke="#5F8575" fill="#5F8575" fillOpacity={0.4} />}
+                    </RadarChart>
+                  </ResponsiveContainer>
+                  <div>
+                    <MuiToolTip title={showOverall ? "Close" : "Show"} >
+                      <Button variant="outlined" color={showOverall ? "error" : "success"} className="login" onClick={showOverallMeans}>
+                        Overall {showOverall ? <HighlightOffIcon style={{marginLeft: 10}} /> : <AddCircleIcon style={{marginLeft: 10}}/>}  
+                      </Button> 
+                    </MuiToolTip>
+                    <Grid container justifyContent="center" alignContent="center" sx={{marginTop: 3, marginBottom: 1}} spacing={1} direction="column"> 
+                        {colours.reverse().map((colour) => (
+                          <Grid key={colour.colour} item> 
+                            <Paper 
+                              sx={{
+                                height: 50, 
+                                width: 100, 
+                                backgroundColor: colour.colour,
+                                fontSize: 20,
+                                display: "flex",
+                                flexDirection: "column",
+                                color: "white",
+                                justifyContent: "center"}}
+                            >{colour.val + (colour.val != 1 && "<")}  </Paper>
+                          </Grid>
+                        ))}
+                    </Grid>
+                    <div style={{color:"white", fontSize: 17}}>Valence</div>
+                  </div>
+                </div>
+                <p style={{color: "#8884d8"}}>{metrics.month}<i style={{marginLeft: 10}}>- {metrics.trackCount} tracks</i></p>
+                <Slider style={{color: "#8884d8"}} aria-label="months" min={0} defaultValue={index} value={index} max={means.length-1} step={1} marks onChange={changeMonth}/>
                 <div>
-                  <MuiToolTip title={showOverall ? "Close" : "Show"} >
-                    <Button variant="outlined" color={showOverall ? "error" : "success"} className="login" onClick={showOverallMeans}>
-                      Overall {showOverall ? <HighlightOffIcon style={{marginLeft: 10}} /> : <AddCircleIcon style={{marginLeft: 10}}/>}  
-                    </Button> 
-                  </MuiToolTip>
-                  <Grid container justifyContent="center" alignContent="center" sx={{marginTop: 3, marginBottom: 1}} spacing={1} direction="column"> 
-                      {colours.reverse().map((colour) => (
-                        <Grid key={colour.colour} item> 
-                          <Paper 
-                            sx={{
-                              height: 50, 
-                              width: 100, 
-                              backgroundColor: colour.colour,
-                              fontSize: 20,
-                              display: "flex",
-                              flexDirection: "column",
-                              color: "white",
-                              justifyContent: "center"}}
-                          >{colour.val + (colour.val != 1 && "<")}  </Paper>
-                        </Grid>
-                      ))}
-                  </Grid>
-                  <div style={{color:"white", fontSize: 17}}>Valence</div>
+                  <Button variant="outlined" className="login" onClick={iterate} disabled={cycle}>
+                    Cycle
+                  </Button> 
+                  {cycle && 
+                    <MuiToolTip title="Stop">
+                        <IconButton style={{marginLeft: 10}} variant="outlined" color="error" className="login" onClick={clearCycle}>
+                        <HighlightOffIcon />
+                      </IconButton>
+                    </MuiToolTip>
+                  }
                 </div>
               </div>
-              <p style={{color: "#8884d8"}}>{metrics.month}<i style={{marginLeft: 10}}>- {metrics.trackCount} tracks</i></p>
-              <Slider style={{color: "#8884d8"}} aria-label="months" min={0} defaultValue={index} value={index} max={means.length-1} step={1} marks onChange={changeMonth}/>
-              <div>
-                <Button variant="outlined" className="login" onClick={iterate} disabled={cycle}>
-                  Cycle
-                </Button> 
-                {cycle && 
-                  <MuiToolTip title="Stop">
-                      <IconButton style={{marginLeft: 10}} variant="outlined" color="error" className="login" onClick={clearCycle}>
-                      <HighlightOffIcon />
-                    </IconButton>
-                  </MuiToolTip>
-                }
-              </div>
-            </div>
+              </>
             : 
             <CircularProgress />
           }
