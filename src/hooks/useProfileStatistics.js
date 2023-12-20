@@ -1,6 +1,6 @@
 import useSpotifyData from "./useSpotifyData";
 export default function useProfileStatistics(access_token, token_type) { 
-    const { getTopTracks, getProfile, getSavedTracks, getTrackFeatures } = useSpotifyData(access_token, token_type)
+    const { getTopTracks, getProfile, getSavedTracks, getTrackFeatures, getPlaylists } = useSpotifyData(access_token, token_type)
 
     const monthOnlyString = (date) => { 
         const month = date.getMonth() 
@@ -58,11 +58,11 @@ export default function useProfileStatistics(access_token, token_type) {
             energy: 0, 
             instrumentalness: 0, 
             speechiness: 0,
-            valence: 0
+            valence: 0,
+            tracks: [] 
         } 
         for(const track of tracks){
             if(curDate.getMonth() != track.addedAt.getMonth()) { 
-                
                 monthMeans.push({ 
                     month: monthOnlyString(curDate),
                     trackCount : curMeans.trackCount, 
@@ -71,7 +71,8 @@ export default function useProfileStatistics(access_token, token_type) {
                     energy : curMeans.energy / curMeans.trackCount, 
                     instrumentalness : curMeans.instrumentalness / curMeans.trackCount, 
                     speechiness: curMeans.speechiness / curMeans.trackCount,
-                    valence: curMeans.valence / curMeans.trackCount
+                    valence: curMeans.valence / curMeans.trackCount,
+                    tracks: curMeans.tracks
                 })
                 // reset
                 curMeans = { 
@@ -81,7 +82,8 @@ export default function useProfileStatistics(access_token, token_type) {
                     energy: track.features.energy , 
                     instrumentalness: track.features.instrumentalness, 
                     speechiness: track.features.speechiness,
-                    valence: track.features.valence
+                    valence: track.features.valence,
+                    tracks: [track]
                 } 
                 curDate = track.addedAt
                 curMeans.acousticness = track.features.acousticness
@@ -90,6 +92,7 @@ export default function useProfileStatistics(access_token, token_type) {
                 curMeans.instrumentalness = track.features.instrumentalness
                 curMeans.speechiness = track.features.speechiness
                 curMeans.valence = track.features.valence
+                curMeans.tracks = [track]
             } else { 
                 curMeans.trackCount += 1
                 curMeans.acousticness += track.features.acousticness
@@ -98,6 +101,7 @@ export default function useProfileStatistics(access_token, token_type) {
                 curMeans.instrumentalness += track.features.instrumentalness
                 curMeans.speechiness += track.features.speechiness
                 curMeans.valence += track.features.valence
+                curMeans.tracks.push(track)
             }
         }
         return monthMeans; 
@@ -163,7 +167,22 @@ export default function useProfileStatistics(access_token, token_type) {
             means: means
         })
     }
+
+    const getUserPlaylists = async() => { 
+        let playlists = await getPlaylists()
+        console.log("Playlists", playlists)
+        for(const playlist of playlists.items){ 
+            playlist.tracks.items.forEach((track) => {
+                if(track.track) track.id = track.track.id
+            })
+            playlist.tracks.features = await getTrackFeatures(playlist.tracks.items)
+        }
+        console.log("Full Playlist obj ", playlists)
+        return playlists; 
+    }
+
     return {
-        savedTracksFeatures
+        savedTracksFeatures, 
+        getUserPlaylists
     }
 }

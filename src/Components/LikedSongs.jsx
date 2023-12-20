@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { CircularProgress, Button, Slider, Tooltip as MuiToolTip, Box, Grid, Paper, IconButton } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from "recharts";
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
-export default function LikedSongs({savedTracksMeans})  { 
+export default function LikedSongs({savedTracksMeans, setArtist, artist})  { 
     
     const colours = [{colour: "#0302FC", val: 0.0}, {colour: "#2A00D5", val: 0.2}, 
     {colour: "#63009E", val: 0.4}, {colour: "#A1015D", val: 0.6}, {colour: "#D80027", val: 0.8}, {colour: "#FE0002", val: 1}]
@@ -12,6 +12,7 @@ export default function LikedSongs({savedTracksMeans})  {
     const [cycleInterval, setCycleInterval] = useState(0)
     const [showOverall, setOverall] = useState(true)
     const [means, setMeans] = useState()
+    const [selectedTrack, setSelectedTrack] = useState() 
     const [overallMeans, setOverallMeans] = useState() 
     const [metrics, setMetrics] = useState() 
     const [index, setIndex] = useState(0); 
@@ -21,29 +22,34 @@ export default function LikedSongs({savedTracksMeans})  {
         metric: "Acousticness", 
         value: data.acousticness,
         overall: overallMeans.acousticness, 
+        track: selectedTrack ? selectedTrack.features.acousticness : 0,
         fullMark: 1
       },
       {
         metric: "Danceability", 
         value: data.danceability,
         overall: overallMeans.danceability,
+        track: selectedTrack ? selectedTrack.features.danceability : 0,
         fullMark: 1
       },
       {
         metric: "Energy", 
         value: data.energy,
         overall: overallMeans.energy, 
+        track : selectedTrack ? selectedTrack.features.energy : 0,
         fullMark: 1
       },
       {
         metric: "Instrumentalness", 
         value: data.instrumentalness,
         overall: overallMeans.instrumentalness, 
+        track: selectedTrack ? selectedTrack.features.instrumentalness : 0,
         fullMark: 1
       }, 
       {
         metric: "Speechiness", 
         value: data.speechiness,
+        track: selectedTrack ? selectedTrack.features.speechiness : 0, 
         overall: overallMeans.speechiness, 
         fullMark: 1
       }])
@@ -57,6 +63,7 @@ export default function LikedSongs({savedTracksMeans})  {
       else if(0.8 <= value < 1) return "#D80027"
       else return "#FE0002"
     }
+
     // USER INPUTS ----------------------------------------------------
     const showOverallMeans = () => { 
       setOverall((old) => !old)
@@ -86,6 +93,18 @@ export default function LikedSongs({savedTracksMeans})  {
       setCycleInterval(cycleId)
     }
 
+    const trackClicked = (index, trackId) => { 
+      //Clear if they reclick the track
+      if(selectedTrack && selectedTrack.id === trackId) { 
+        setSelectedTrack(undefined)
+        setArtist(undefined)
+      } else { 
+        setSelectedTrack(metrics.tracks[index])
+        console.log(metrics.tracks[index].artists[0])
+        setArtist(metrics.tracks[index].artists[0])
+      }
+    }
+
     // USE EFFECTS ---------------------------------------------------
     useEffect(() => { 
         setMeans(savedTracksMeans.means)
@@ -112,7 +131,12 @@ export default function LikedSongs({savedTracksMeans})  {
             means && metrics && overallMeans ?
             <>
             <div className="radarTitle">
-              Your liked songs<i style={{marginLeft: 10}}> -  {overallMeans.trackCount} tracks</i>
+              <p style={{marginBottom: 3}}>Your liked songs profile<i style={{marginLeft: 10}}> -  {overallMeans.trackCount} tracks</i></p>
+              {
+              selectedTrack && <p style={{marginTop: 4, marginBottom: 0, fontSize: 16}}>
+                <i>{selectedTrack.name + " - " + selectedTrack.artists[0].name}</i>
+                </p>
+              }
             </div>
               <div className="radarWrapper">
                 <div className="radar">
@@ -122,8 +146,10 @@ export default function LikedSongs({savedTracksMeans})  {
                       <PolarAngleAxis dataKey="metric" /> 
                       <PolarRadiusAxis angle={45} domain={[0,1]}/>
                       <Tooltip contentStyle={{fontSize: 14}}/>
+                      {selectedTrack && <Radar name={selectedTrack.name} dataKey="track" stroke="#fcf6bd" fill="#fcf6bd" fillOpacity={0.0} />}
                       <Radar name="Month" dataKey="value" stroke={colorise(metrics.valence)} fill={colorise(metrics.valence)} fillOpacity={0.6} />
-                      {showOverall && <Radar name="Overall" dataKey="overall" stroke="#5F8575" fill="#5F8575" fillOpacity={0.4} />}
+                      {showOverall && <Radar name="Overall" dataKey="overall" stroke="#8BF9F3" fill="#8BF9F3" fillOpacity={0.0} />}
+                      <Legend wrapperStyle={{fontSize: 14, marginBottom: 20}}/>
                     </RadarChart>
                   </ResponsiveContainer>
                   <div>
@@ -152,6 +178,19 @@ export default function LikedSongs({savedTracksMeans})  {
                     <div style={{color:"white", fontSize: 17}}>Valence</div>
                   </div>
                 </div>
+                <Grid container justifyContent="center" alignContent="content" spacing={1} direction="row"> 
+                  {metrics.tracks && metrics.tracks.map((track, i) => (
+                    <Grid key={track.id} item >
+                      <MuiToolTip title={track.name + " - " + track.artists[0].name}>
+                        <IconButton onClick={() => trackClicked(i, track.id)} sx={{padding: 0}}>
+                          <Paper sx={{height:50, width:50,  border: selectedTrack && selectedTrack.id === track.id ? 3 : 0, borderColor: "#87c38f"}}>
+                            <img className="trackImg" src={track.album.images[2].url} />
+                          </Paper>
+                        </IconButton>
+                      </MuiToolTip>
+                    </Grid> 
+                  ))}
+                </Grid>
                 <p style={{color: "#8884d8"}}>{metrics.month}<i style={{marginLeft: 10}}>- {metrics.trackCount} tracks</i></p>
                 <Slider style={{color: "#8884d8"}} aria-label="months" min={0} defaultValue={index} value={index} max={means.length-1} step={1} marks onChange={changeMonth}/>
                 <div>

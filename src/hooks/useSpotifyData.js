@@ -1,9 +1,14 @@
 
 export default function useSpotifyData(access_token, token_type){ 
-
+    
     const getContent = (path, query="", body, method = 'get') => { 
         return new Promise(function(fufill, reject) { 
-            fetch(new Request('https://api.spotify.com/v1'+path+query, {
+            const fullQuery = 'https://api.spotify.com/v1'+path+query
+            const item = sessionStorage.getItem(fullQuery)
+            console.log(item ? `Item in session : ${item}` : "Item not in session")
+            if(item) fufill(JSON.parse(item))
+            //else fetch it 
+            else fetch(new Request(fullQuery, {
                 method: method, 
                 body: body
               }), {
@@ -12,7 +17,10 @@ export default function useSpotifyData(access_token, token_type){
             }, 
             })
             .then((response) => { 
-                if(response.ok) response.json().then(data => fufill(data))
+                if(response.ok) response.json().then(data => {
+                    sessionStorage.setItem(fullQuery, JSON.stringify(data))
+                    fufill(data)
+                })
                 else throw new Error(`Request error code ${response.status}`)
             })
             .catch(err => reject(err))
@@ -84,10 +92,33 @@ export default function useSpotifyData(access_token, token_type){
         })
     }
 
+    const getPlaylists = () => { 
+        return new Promise(function(fufill, reject){
+            try {
+                const fetches = []
+                getContent(("/me/playlists"))
+                .then((userPlaylists) => { 
+                    for(const playlist of userPlaylists.items){
+                        fetches.push(
+                            getContent(`/playlists/${playlist.id}/tracks`)
+                            .then((tracks) => { 
+                                playlist.tracks = tracks
+                            })
+                        )
+                    }
+                    Promise.all(fetches).then(() => fufill(userPlaylists))
+                })
+            } catch (err) { 
+                reject(err)
+            }
+        })
+    }
+
     return {
         getProfile,
         getTopTracks,
         getTrackFeatures,  
-        getSavedTracks
+        getSavedTracks, 
+        getPlaylists
     }
 }
