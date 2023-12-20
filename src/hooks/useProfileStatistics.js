@@ -57,7 +57,8 @@ export default function useProfileStatistics(access_token, token_type) {
             danceability: 0, 
             energy: 0, 
             instrumentalness: 0, 
-            speechiness: 0
+            speechiness: 0,
+            valence: 0
         } 
         for(const track of tracks){
             if(curDate.getMonth() != track.addedAt.getMonth()) { 
@@ -69,7 +70,8 @@ export default function useProfileStatistics(access_token, token_type) {
                     danceability: curMeans.danceability / curMeans.trackCount,
                     energy : curMeans.energy / curMeans.trackCount, 
                     instrumentalness : curMeans.instrumentalness / curMeans.trackCount, 
-                    speechiness: curMeans.speechiness / curMeans.trackCount 
+                    speechiness: curMeans.speechiness / curMeans.trackCount,
+                    valence: curMeans.valence / curMeans.trackCount
                 })
                 // reset
                 curMeans = { 
@@ -78,7 +80,8 @@ export default function useProfileStatistics(access_token, token_type) {
                     danceability: track.features.danceability, 
                     energy: track.features.energy , 
                     instrumentalness: track.features.instrumentalness, 
-                    speechiness: track.features.speechiness
+                    speechiness: track.features.speechiness,
+                    valence: track.features.valence
                 } 
                 curDate = track.addedAt
                 curMeans.acousticness = track.features.acousticness
@@ -86,6 +89,7 @@ export default function useProfileStatistics(access_token, token_type) {
                 curMeans.energy = track.features.energy 
                 curMeans.instrumentalness = track.features.instrumentalness
                 curMeans.speechiness = track.features.speechiness
+                curMeans.valence = track.features.valence
             } else { 
                 curMeans.trackCount += 1
                 curMeans.acousticness += track.features.acousticness
@@ -93,6 +97,7 @@ export default function useProfileStatistics(access_token, token_type) {
                 curMeans.energy += track.features.energy 
                 curMeans.instrumentalness += track.features.instrumentalness
                 curMeans.speechiness += track.features.speechiness
+                curMeans.valence += track.features.valence
             }
         }
         return monthMeans; 
@@ -105,16 +110,17 @@ export default function useProfileStatistics(access_token, token_type) {
             danceability: 0, 
             energy: 0, 
             instrumentalness: 0, 
-            speechiness: 0
+            speechiness: 0,
+            valence: 0
         } 
         means.forEach(mean => { 
             overall.acousticness += mean.acousticness 
             overall.danceability += mean.danceability 
-            overall.danceability += mean.danceability
             overall.energy += mean.energy 
             overall.instrumentalness += mean.instrumentalness 
             overall.speechiness += mean.speechiness
             overall.trackCount += mean.trackCount
+            overall.valence += mean.valence
         })
         return({
             trackCount: overall.trackCount,
@@ -122,7 +128,8 @@ export default function useProfileStatistics(access_token, token_type) {
             danceability:  overall.danceability / means.length, 
             energy:  overall.energy / means.length, 
             instrumentalness:  overall.instrumentalness / means.length, 
-            speechiness:  overall.speechiness / means.length
+            speechiness:  overall.speechiness / means.length,
+            valence: overall.valence / means.length
         })
     }
 

@@ -24,6 +24,27 @@
   color: #61dafb;
 }
 
+.radarComponent { 
+  display: flex; 
+  flex-direction: column;
+}
+
+.radarTitle { 
+  display: flex;
+  color: ghostwhite;
+}
+
+.radarWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.radar{
+  display: flex; 
+  flex-direction: row;
+  max-width: 30%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
