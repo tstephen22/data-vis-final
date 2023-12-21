@@ -100,7 +100,6 @@ export default function LikedSongs({savedTracksMeans, setArtist, artist})  {
         setArtist(undefined)
       } else { 
         setSelectedTrack(metrics.tracks[index])
-        console.log(metrics.tracks[index].artists[0])
         setArtist(metrics.tracks[index].artists[0])
       }
     }
@@ -108,7 +107,6 @@ export default function LikedSongs({savedTracksMeans, setArtist, artist})  {
     // USE EFFECTS ---------------------------------------------------
     useEffect(() => { 
         setMeans(savedTracksMeans.means)
-        console.log(savedTracksMeans.means)
         setMetrics(savedTracksMeans.means[0])
         setOverallMeans(savedTracksMeans.overallMeans) 
     }, [])
@@ -116,7 +114,6 @@ export default function LikedSongs({savedTracksMeans, setArtist, artist})  {
     useEffect(() => { 
       const newMetrics = means ? means[index] : {};
       setMetrics(newMetrics)
-      console.log("New metrics ", newMetrics)
       
     }, [index])
 
@@ -146,9 +143,9 @@ export default function LikedSongs({savedTracksMeans, setArtist, artist})  {
                       <PolarAngleAxis dataKey="metric" /> 
                       <PolarRadiusAxis angle={45} domain={[0,1]}/>
                       <Tooltip contentStyle={{fontSize: 14}}/>
-                      {selectedTrack && <Radar name={selectedTrack.name} dataKey="track" stroke="#fcf6bd" fill="#fcf6bd" fillOpacity={0.0} />}
                       <Radar name="Month" dataKey="value" stroke={colorise(metrics.valence)} fill={colorise(metrics.valence)} fillOpacity={0.6} />
                       {showOverall && <Radar name="Overall" dataKey="overall" stroke="#8BF9F3" fill="#8BF9F3" fillOpacity={0.0} />}
+                      {selectedTrack && <Radar name={selectedTrack.name} dataKey="track" stroke="#fcf6bd" fill="#fcf6bd" fillOpacity={0.0} />}
                       <Legend wrapperStyle={{fontSize: 14, marginBottom: 20}}/>
                     </RadarChart>
                   </ResponsiveContainer>

@@ -19,6 +19,34 @@
   }
 }
 
+.header { 
+  text-align: left; 
+  width: 100%; 
+  margin:10;
+  color: white;
+}
+
+.profileName { 
+  display: flex; 
+  flex-direction: row;
+  align-items: center;
+  margin: 4
+}
+
+.main { 
+  text-align: center;
+  background-color: #282c34;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  gap: 20;
+}
+
+
 .login {
   color: #61dafb;
 }

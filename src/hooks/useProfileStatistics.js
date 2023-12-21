@@ -187,6 +187,7 @@ export default function useProfileStatistics(access_token, token_type) {
     return {
         savedTracksFeatures, 
         getUserPlaylists,
-        calculateOverallMeans 
+        calculateOverallMeans,
+        getProfile
     }
 }
