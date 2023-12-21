@@ -66,12 +66,12 @@ export default function useProfileStatistics(access_token, token_type) {
                 monthMeans.push({ 
                     month: monthOnlyString(curDate),
                     trackCount : curMeans.trackCount, 
-                    acousticness: curMeans.acousticness / curMeans.trackCount,
-                    danceability: curMeans.danceability / curMeans.trackCount,
-                    energy : curMeans.energy / curMeans.trackCount, 
-                    instrumentalness : curMeans.instrumentalness / curMeans.trackCount, 
-                    speechiness: curMeans.speechiness / curMeans.trackCount,
-                    valence: curMeans.valence / curMeans.trackCount,
+                    acousticness: (curMeans.acousticness / curMeans.trackCount).toFixed(5),
+                    danceability: (curMeans.danceability / curMeans.trackCount).toFixed(5),
+                    energy : (curMeans.energy / curMeans.trackCount).toFixed(5), 
+                    instrumentalness : (curMeans.instrumentalness / curMeans.trackCount).toFixed(5), 
+                    speechiness: (curMeans.speechiness / curMeans.trackCount).toFixed(5),
+                    valence: (curMeans.valence / curMeans.trackCount).toFixed(5),
                     tracks: curMeans.tracks
                 })
                 // reset
@@ -128,12 +128,12 @@ export default function useProfileStatistics(access_token, token_type) {
         })
         return({
             trackCount: overall.trackCount,
-            acousticness: overall.acousticness / means.length, 
-            danceability:  overall.danceability / means.length, 
-            energy:  overall.energy / means.length, 
-            instrumentalness:  overall.instrumentalness / means.length, 
-            speechiness:  overall.speechiness / means.length,
-            valence: overall.valence / means.length
+            acousticness: (overall.acousticness / means.length).toFixed(5), 
+            danceability:  (overall.danceability / means.length).toFixed(5), 
+            energy:  (overall.energy / means.length).toFixed(5), 
+            instrumentalness:  (overall.instrumentalness / means.length).toFixed(5), 
+            speechiness:  (overall.speechiness / means.length).toFixed(5),
+            valence: (overall.valence / means.length).toFixed(5)
         })
     }
 
@@ -183,6 +183,7 @@ export default function useProfileStatistics(access_token, token_type) {
 
     return {
         savedTracksFeatures, 
-        getUserPlaylists
+        getUserPlaylists,
+        calculateOverallMeans 
     }
 }

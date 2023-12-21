@@ -7,7 +7,7 @@ import UserPlaylists from "../Components/UserPlaylists";
 export default function ProfilePage()  { 
   const access_token = sessionStorage.getItem("access_token")
   const token_type = sessionStorage.getItem("token_type")
-  const { savedTracksFeatures, getUserPlaylists } = useProfileStatistics(access_token, token_type);  
+  const { savedTracksFeatures, getUserPlaylists, calculateOverallMeans } = useProfileStatistics(access_token, token_type);  
   const [savedTracksMeans, setSavedTracksMeans] = useState()
   const [artist, setArtist] = useState()
   const [playlists, setPlaylists] = useState() 
@@ -25,7 +25,7 @@ export default function ProfilePage()  {
   return(
     savedTracksMeans && playlists ?
       <>
-        <UserPlaylists userPlaylists={playlists} setPlaylists={setPlaylists} />
+        <UserPlaylists userPlaylists={playlists} setPlaylists={setPlaylists} calculateOverallMeans={calculateOverallMeans} />
         <LikedSongs savedTracksMeans={savedTracksMeans} setArtist={setArtist} artist={artist}/>
       </> 
     : <CircularProgress />)

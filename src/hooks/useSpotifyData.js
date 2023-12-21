@@ -5,7 +5,6 @@ export default function useSpotifyData(access_token, token_type){
         return new Promise(function(fufill, reject) { 
             const fullQuery = 'https://api.spotify.com/v1'+path+query
             const item = sessionStorage.getItem(fullQuery)
-            console.log(item ? `Item in session : ${item}` : "Item not in session")
             if(item) fufill(JSON.parse(item))
             //else fetch it 
             else fetch(new Request(fullQuery, {
