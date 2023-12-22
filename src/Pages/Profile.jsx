@@ -78,6 +78,8 @@ export default function ProfilePage()  {
                 >
                   <Typography sx={{ p: 2 }}>
                     View these metrics for your liked songs and playlists! 
+                    <br /> 
+                    *Liked songs are mean average values
                     <br/><br/>
                     <i>Acousticness - </i> A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 
                     <br />1.0 represents high confidence the track is acoustic.
